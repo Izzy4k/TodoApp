@@ -12,6 +12,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -31,6 +35,7 @@ import java.io.IOException;
 public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
 
+    private ActivityResultLauncher<Intent> resultContracts;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,11 +61,33 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+        resultContracts = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if(result != null) {
+                    Intent intent = result.getData();
+                    Uri uri = intent.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = requireActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+                    cursor.moveToNext();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+                    Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+                    try {
+                        Glide.with(binding.imageScreen).load(modifyOrientation(bitmap, picturePath)).circleCrop().into(binding.imageScreen);
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+        });
     }
 
     private void getGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, 2);
+        resultContracts.launch(intent);
+//        startActivityForResult(intent,2);
     }
 
     @Override
@@ -71,27 +98,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2) {
-            if (data != null) {
-                Uri uri = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = requireActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
-                cursor.moveToNext();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
-                Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                try {
-                    Glide.with(binding.imageScreen).load(modifyOrientation(bitmap, picturePath)).circleCrop().into(binding.imageScreen);
-                } catch (IOException e) {
-
-                }
-            }
-        }
-    }
 
 
     private static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
@@ -131,4 +137,5 @@ public class ProfileFragment extends Fragment {
         matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
+
 }
