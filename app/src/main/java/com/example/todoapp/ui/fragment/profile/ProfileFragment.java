@@ -64,8 +64,8 @@ public class ProfileFragment extends Fragment {
         resultContracts = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
-                if(result != null) {
                     Intent intent = result.getData();
+                    if(intent != null){
                     Uri uri = intent.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     Cursor cursor = requireActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
@@ -78,8 +78,8 @@ public class ProfileFragment extends Fragment {
                         Glide.with(binding.imageScreen).load(modifyOrientation(bitmap, picturePath)).circleCrop().into(binding.imageScreen);
                     } catch (IOException e) {
 
-                    }
                 }
+                    }
             }
         });
     }

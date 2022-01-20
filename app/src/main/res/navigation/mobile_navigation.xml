@@ -32,4 +32,9 @@
         android:name="com.example.todoapp.ui.fragment.profile.ProfileFragment"
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/boardFragment"
+        android:name="com.example.todoapp.ui.fragment.board.BoardFragment"
+        android:label="fragment_board"
+        tools:layout="@layout/fragment_board" />
 </navigation>
