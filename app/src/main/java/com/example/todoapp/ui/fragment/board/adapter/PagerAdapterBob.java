@@ -11,14 +11,19 @@ import com.example.todoapp.databinding.ItemBoardBinding;
 
 public class PagerAdapterBob extends RecyclerView.Adapter<PagerAdapterBob.PagerViewHolder> {
     ItemBoardBinding binding;
-    private final int[] images = {R.drawable.ic_board_first, R.drawable.ic_board_second, R.drawable.ic_board_third};
-    private final String[] titles = {"Что на умном", "Cделай вид что читаешь", "Долгожданый конец "};
-    private final String[] descriptions = {"аывфафалывфафлоафылоафдваоофлыаф", "вфаолафыоафылоафло", "урааааааааааа конец"};
+    private final int[] images = {R.drawable.ic_board_first, R.drawable.ic_board_second,
+            R.drawable.ic_board_third};
+    private final String[] titles = {"Что на умном", "Cделай вид что читаешь",
+            "Долгожданый конец "};
+    private final String[] descriptions = {"аывфафалывфафлоафылоафдваоофлыаф", "вфаолафыоафылоафло",
+            "урааааааааааа конец"};
 
     @NonNull
     @Override
     public PagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        binding = ItemBoardBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        binding = ItemBoardBinding.inflate(LayoutInflater.from(parent.getContext()),
+                parent,
+                false);
         return new PagerViewHolder(binding);
     }
 

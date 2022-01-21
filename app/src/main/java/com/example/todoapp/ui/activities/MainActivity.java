@@ -1,8 +1,9 @@
-package com.example.todoapp;
+package com.example.todoapp.ui.activities;
 
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.todoapp.R;
 import com.example.todoapp.app.App;
 import com.example.todoapp.database.sharedpreferences.Prefs;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        controller = Navigation.findNavController(this,R.id.nav_host_fragment_activity_main);
+        controller = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications , R.id.navigation_profile)
                 .build();

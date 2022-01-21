@@ -60,7 +60,8 @@ public class BoardFragment extends Fragment {
 
 
     private void navigateFragment() {
-        controller = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment_activity_main);
+        controller = Navigation.findNavController(requireActivity(),
+                R.id.nav_host_fragment_activity_main);
         controller.navigate(R.id.navigation_home);
     }
 
