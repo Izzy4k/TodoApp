@@ -26,6 +26,7 @@ public class BoardFragment extends Fragment {
     private PagerAdapterBob adapterBob;
     private NavController controller;
 
+
     public BoardFragment() {
 
     }
@@ -53,23 +54,24 @@ public class BoardFragment extends Fragment {
             navigateFragment();
         });
         binding.txtSkip.setOnClickListener(v -> {
-        binding.viewPagerBoard.setCurrentItem(2);
+
+            binding.viewPagerBoard.setCurrentItem(2);
         });
     }
-
 
 
     private void navigateFragment() {
         controller = Navigation.findNavController(requireActivity(),
                 R.id.nav_host_fragment_activity_main);
-        controller.navigate(R.id.navigation_home);
+        controller.navigateUp();
+
     }
 
     private void initListener() {
         new TabLayoutMediator(binding.tabBoard, binding.viewPagerBoard, (tab, position) -> {
-            if(position == 0){
+            if (position == 0) {
                 tab.setIcon(R.drawable.ic_click);
-            }else {
+            } else {
                 tab.setIcon(R.drawable.ic_primitivedot_106373);
             }
 
@@ -90,17 +92,17 @@ public class BoardFragment extends Fragment {
 
             }
         });
-            binding.viewPagerBoard.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-                @Override
-                public void onPageSelected(int position) {
-                    super.onPageSelected(position);
-                    if(position == 2){
-                        binding.txtFinish.setVisibility(View.VISIBLE);
-                    }else {
-                        binding.txtFinish.setVisibility(View.GONE);
-                    }
+        binding.viewPagerBoard.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (position == 2) {
+                    binding.txtFinish.setVisibility(View.VISIBLE);
+                } else {
+                    binding.txtFinish.setVisibility(View.GONE);
                 }
-            });
+            }
+        });
     }
 
     private void initPager() {
