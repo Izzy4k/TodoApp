@@ -1,6 +1,7 @@
 package com.example.todoapp.ui.fragment.profile;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -21,20 +22,27 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.todoapp.App;
 import com.example.todoapp.R;
 import com.example.todoapp.databinding.FragmentProfileBinding;
+import com.example.todoapp.utils.Prefs;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 
 public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
+    private Uri uri ;
 
     private ActivityResultLauncher<Intent> resultContracts;
 
@@ -50,6 +58,52 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initListener();
+        initBtn();
+        initText();
+        initImageListener();
+    }
+
+    private void initImageListener() {
+        if (!Prefs.getPrefs().getImage().equals("")) {
+            Uri uri = Uri.parse(Prefs.getPrefs().getImage());
+            Glide.with(binding.imageScreen).load(uri).circleCrop().into(binding.imageScreen);
+        }
+    }
+
+    private void initText() {
+        binding.txtFirstName.setText(Prefs.getPrefs().firstName());
+        binding.txtLastName.setText(Prefs.getPrefs().lastName());
+    }
+
+    private void initBtn() {
+        binding.btnSave.setOnClickListener(v -> {
+            saveData();
+            initText();
+            clear();
+            initImageListener();
+        });
+    }
+
+    private void clear() {
+        binding.editFirstName.setText("");
+        binding.editLastName.setText("");
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
+    }
+
+    private void saveData() {
+        String firstName = binding.editFirstName.getText().toString();
+        String lastName = binding.editLastName.getText().toString();
+        if (!firstName.equals("")) {
+            Prefs.getPrefs().saveFirstName(firstName);
+        }
+        if (!lastName.equals("")) {
+            Prefs.getPrefs().saveLastName(lastName);
+        }
+        if(uri != null){
+            Prefs.getPrefs().saveImage(uri);
+            Toast.makeText(requireContext(),"Вы успешно сохранились",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void initListener() {
@@ -71,27 +125,12 @@ public class ProfileFragment extends Fragment {
                 result -> {
                     Intent intent = result.getData();
                     if (intent != null) {
-                        Uri uri = intent.getData();
-                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = requireActivity().getContentResolver().query(uri,
-                                filePathColumn,
-                                null,
-                                null,
-                                null);
-                        cursor.moveToNext();
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        String picturePath = cursor.getString(columnIndex);
-                        cursor.close();
-                        Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                        try {
-                            Glide.with(binding.imageScreen).load(modifyOrientation(bitmap,
-                                    picturePath)).circleCrop().into(binding.imageScreen);
-                        } catch (IOException e) {
-                            Toast.makeText(requireContext(), "Exception!", Toast.LENGTH_LONG).show();
-                        }
+                         uri = intent.getData();
+                        Glide.with(binding.imageScreen).load(uri).circleCrop().into(binding.imageScreen);
                     }
                 });
     }
+
 
     private void getGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK,
@@ -111,56 +150,5 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private static Bitmap modifyOrientation(Bitmap bitmap,
-                                            String image_absolute_path) throws IOException {
-        ExifInterface ei = new ExifInterface(image_absolute_path);
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                return rotate(bitmap, 90);
-
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                return rotate(bitmap, 180);
-
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                return rotate(bitmap, 270);
-
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                return flip(bitmap, true, false);
-
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                return flip(bitmap, false, true);
-
-            default:
-                return bitmap;
-        }
-    }
-
-    private static Bitmap rotate(Bitmap bitmap, float degrees) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degrees);
-        return Bitmap.createBitmap(bitmap,
-                0,
-                0,
-                bitmap.getWidth(),
-                bitmap.getHeight(),
-                matrix,
-                true);
-
-    }
-
-    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
-        Matrix matrix = new Matrix();
-        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
-        return Bitmap.createBitmap(bitmap,
-                0,
-                0,
-                bitmap.getWidth(),
-                bitmap.getHeight(),
-                matrix,
-                true);
-    }
 
 }

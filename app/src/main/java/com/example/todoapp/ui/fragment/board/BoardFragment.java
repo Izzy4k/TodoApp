@@ -27,17 +27,11 @@ public class BoardFragment extends Fragment {
     private NavController controller;
 
 
-    public BoardFragment() {
-
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentBoardBinding.inflate(inflater);
-
-
         return binding.getRoot();
     }
 
@@ -54,7 +48,6 @@ public class BoardFragment extends Fragment {
             navigateFragment();
         });
         binding.txtSkip.setOnClickListener(v -> {
-
             binding.viewPagerBoard.setCurrentItem(2);
         });
     }
@@ -69,11 +62,12 @@ public class BoardFragment extends Fragment {
 
     private void initListener() {
         new TabLayoutMediator(binding.tabBoard, binding.viewPagerBoard, (tab, position) -> {
-            if (position == 0) {
+                   if (position == 0) {
                 tab.setIcon(R.drawable.ic_click);
             } else {
                 tab.setIcon(R.drawable.ic_primitivedot_106373);
             }
+
 
         }).attach();
         binding.tabBoard.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

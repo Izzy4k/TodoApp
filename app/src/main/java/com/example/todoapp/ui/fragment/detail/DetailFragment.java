@@ -11,9 +11,12 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.todoapp.App;
 import com.example.todoapp.R;
 import com.example.todoapp.databinding.FragmentDetailBinding;
+import com.example.todoapp.models.Task;
 
 public class DetailFragment extends Fragment {
     private FragmentDetailBinding binding;
@@ -30,16 +33,44 @@ public class DetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initListener();
+        initArgumentsListener();
     }
 
+    private void initArgumentsListener() {
+        if (getArguments() != null) {
+            Task task = (Task) getArguments().getSerializable("model");
+            binding.etTxt.setText(task.getTitle());
+            binding.btnSave.setText("Edit");
+            binding.btnSave.setOnClickListener(v -> {
+                String result = binding.etTxt.getText().toString().trim();
+                if(!result.equals("")){
+                    task.setTitle(result);
+                    App.dataBase.taskDao().update(task);
+                    closeFragment();
+                }else {
+                    Toast.makeText(requireContext(),"Пусто бля",Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
+
     private void initListener() {
+        binding.btnSave.setText("Save");
         binding.btnSave.setOnClickListener(v -> {
             String result = binding.etTxt.getText().toString().trim();
-            Bundle bundle = new Bundle();
-            bundle.putString("key", result);
-            getParentFragmentManager().setFragmentResult("top", bundle);
-            closeFragment();
+            if(!result.equals("")){
+                closeFragment();
+                saveTask(result);
+            } else {
+                Toast.makeText(requireContext(),"Пусто бля",Toast.LENGTH_LONG).show();
+            }
         });
+    }
+
+    private void saveTask(String result) {
+        Task task = new Task(result);
+        App.dataBase.taskDao().addTask(task);
     }
 
     private void closeFragment() {
