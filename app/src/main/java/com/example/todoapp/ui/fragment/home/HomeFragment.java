@@ -33,7 +33,6 @@ public class HomeFragment extends Fragment implements Click {
     private final String not = "Нет";
 
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +47,7 @@ public class HomeFragment extends Fragment implements Click {
         View root = binding.getRoot();
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment implements Click {
     }
 
     private void initFragmentResultListener() {
-     List<Task> list = App.dataBase.taskDao().getAllTasks();
+        List<Task> list = App.dataBase.taskDao().getAllTasks();
         adapter.setList(list);
     }
 

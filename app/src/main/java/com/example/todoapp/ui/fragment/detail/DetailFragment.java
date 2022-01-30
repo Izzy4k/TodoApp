@@ -53,8 +53,6 @@ public class DetailFragment extends Fragment {
             });
         }
     }
-
-
     private void initListener() {
         binding.btnSave.setText("Save");
         binding.btnSave.setOnClickListener(v -> {

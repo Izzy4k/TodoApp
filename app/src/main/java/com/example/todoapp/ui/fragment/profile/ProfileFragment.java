@@ -50,7 +50,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater);
-
         return binding.getRoot();
     }
 
@@ -105,7 +104,6 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(requireContext(),"Вы успешно сохранились",Toast.LENGTH_LONG).show();
         }
     }
-
     private void initListener() {
         binding.imageScreen.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -130,8 +128,6 @@ public class ProfileFragment extends Fragment {
                     }
                 });
     }
-
-
     private void getGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
