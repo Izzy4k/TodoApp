@@ -2,6 +2,7 @@ package com.example.todoapp.ui.fragment.board;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,15 +18,16 @@ import android.view.ViewGroup;
 import com.example.todoapp.R;
 import com.example.todoapp.databinding.FragmentBoardBinding;
 import com.example.todoapp.ui.fragment.board.adapter.PagerAdapterBob;
+import com.example.todoapp.utils.Prefs;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class BoardFragment extends Fragment {
     private FragmentBoardBinding binding;
     private PagerAdapterBob adapterBob;
     private NavController controller;
-
 
 
     @Override
@@ -38,13 +40,23 @@ public class BoardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        controller = Navigation.findNavController(view);
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().finish();
+            }
+        });
         initPager();
         initListener();
         initBtn();
+
     }
+
 
     private void initBtn() {
         binding.txtFinish.setOnClickListener(v -> {
+            Prefs.getPrefs().saveState();
             navigateFragment();
         });
         binding.txtSkip.setOnClickListener(v -> {
@@ -54,15 +66,13 @@ public class BoardFragment extends Fragment {
 
 
     private void navigateFragment() {
-        controller = Navigation.findNavController(requireActivity(),
-                R.id.nav_host_fragment_activity_main);
-        controller.navigateUp();
+        controller.navigate(R.id.action_boardFragment_to_authFragment3);
 
     }
 
     private void initListener() {
         new TabLayoutMediator(binding.tabBoard, binding.viewPagerBoard, (tab, position) -> {
-                   if (position == 0) {
+            if (position == 0) {
                 tab.setIcon(R.drawable.ic_click);
             } else {
                 tab.setIcon(R.drawable.ic_primitivedot_106373);

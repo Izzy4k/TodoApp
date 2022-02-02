@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,16 +20,16 @@ import com.example.todoapp.R;
 import com.example.todoapp.App;
 import com.example.todoapp.databinding.FragmentHomeBinding;
 import com.example.todoapp.models.Task;
+import com.example.todoapp.ui.activities.MainActivity;
 
 import java.util.List;
 
 public class HomeFragment extends Fragment implements Click {
 
-    private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
     private MainAdapter adapter;
     private NavController controller;
-    private final String title = "Вы точно хотите удалить эту хуйню?";
+    private final String title = "Вы точно хотите удалить эту Запись?";
     private final String yes = "Дыа";
     private final String not = "Нет";
 
@@ -41,8 +42,7 @@ public class HomeFragment extends Fragment implements Click {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        ((MainActivity)requireActivity()).updateStatusBar("#FFFFFFFF");
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         return root;
@@ -51,10 +51,17 @@ public class HomeFragment extends Fragment implements Click {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().finish();
+            }
+        });
         controller = Navigation.findNavController(view);
         binding.rvNote.setAdapter(adapter);
         initListener();
         initFragmentResultListener();
+
     }
 
     private void initFragmentResultListener() {
@@ -92,7 +99,7 @@ public class HomeFragment extends Fragment implements Click {
                 }
         );
         builder.setNegativeButton(not, (dialog, which) -> {
-            Toast.makeText(requireContext(), "Да пошел ты на хуй!", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Да пошел ты!", Toast.LENGTH_LONG).show();
         }).show();
     }
 }

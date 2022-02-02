@@ -36,5 +36,18 @@
         android:id="@+id/boardFragment"
         android:name="com.example.todoapp.ui.fragment.board.BoardFragment"
         android:label="fragment_board"
-        tools:layout="@layout/fragment_board" />
+        tools:layout="@layout/fragment_board" >
+        <action
+            android:id="@+id/action_boardFragment_to_authFragment3"
+            app:destination="@id/authFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.example.todoapp.ui.fragment.auth.AuthFragment"
+        android:label="fragment_auth"
+        tools:layout="@layout/fragment_auth" >
+        <action
+            android:id="@+id/action_authFragment_to_navigation_home2"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>

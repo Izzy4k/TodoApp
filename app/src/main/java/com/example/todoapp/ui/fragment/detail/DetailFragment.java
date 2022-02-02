@@ -48,7 +48,7 @@ public class DetailFragment extends Fragment {
                     App.dataBase.taskDao().update(task);
                     closeFragment();
                 }else {
-                    Toast.makeText(requireContext(),"Пусто бля",Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(),"Пусто",Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -61,7 +61,7 @@ public class DetailFragment extends Fragment {
                 closeFragment();
                 saveTask(result);
             } else {
-                Toast.makeText(requireContext(),"Пусто бля",Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(),"Пусто",Toast.LENGTH_LONG).show();
             }
         });
     }
