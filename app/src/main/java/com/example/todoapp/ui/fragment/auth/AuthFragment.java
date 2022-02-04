@@ -45,6 +45,7 @@ public class AuthFragment extends Fragment {
     private GoogleSignInClient client ;
     private NavController controller ;
     private MyDialog myDialog ;
+    private ActivityResultLauncher<Intent> resultLauncher ;
 
 
 
@@ -72,6 +73,18 @@ public class AuthFragment extends Fragment {
                 }
             }
         });
+        resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
+            if(result.getResultCode() == Activity.RESULT_OK){
+                try {
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    myDialog.show();
+                    singIn(account);
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 
@@ -95,18 +108,7 @@ public class AuthFragment extends Fragment {
         Intent intentClient = client.getSignInIntent();
         resultLauncher.launch(intentClient);
     }
-    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
-       if(result.getResultCode() == Activity.RESULT_OK){
-           try {
-               Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-               GoogleSignInAccount account = task.getResult(ApiException.class);
-               myDialog.show();
-               singIn(account);
-           } catch (ApiException e) {
-               e.printStackTrace();
-           }
-       }
-    });
+
 
     private void singIn(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
