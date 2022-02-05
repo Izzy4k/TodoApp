@@ -1,7 +1,6 @@
 package com.example.todoapp.ui.fragment.home;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +11,15 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.todoapp.R;
 import com.example.todoapp.App;
 import com.example.todoapp.databinding.FragmentHomeBinding;
-import com.example.todoapp.models.Task;
+import com.example.todoapp.models.Aboba;
 import com.example.todoapp.ui.activities.MainActivity;
+import com.example.todoapp.ui.fragment.detail.DetailFragment;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class HomeFragment extends Fragment implements Click {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ((MainActivity)requireActivity()).updateStatusBar("#FFFFFFFF");
+        ((MainActivity) requireActivity()).updateStatusBar("#FFFFFFFF");
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         return root;
@@ -65,7 +64,7 @@ public class HomeFragment extends Fragment implements Click {
     }
 
     private void initFragmentResultListener() {
-        List<Task> list = App.dataBase.taskDao().getAllTasks();
+        List<Aboba> list = App.dataBase.taskDao().getAllTasks();
         adapter.setList(list);
     }
 
@@ -73,6 +72,7 @@ public class HomeFragment extends Fragment implements Click {
     private void initListener() {
         binding.btnAdd.setOnClickListener(v -> {
             controller.navigate(R.id.detailFragment);
+            DetailFragment.isSaveFire = false;
         });
     }
 
@@ -83,18 +83,19 @@ public class HomeFragment extends Fragment implements Click {
     }
 
     @Override
-    public void click(Task task) {
+    public void click(Aboba aboba) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("model", task);
+        bundle.putSerializable("model", aboba);
         controller.navigate(R.id.detailFragment, bundle);
+        DetailFragment.isSaveFire = false;
     }
 
     @Override
-    public void delete(Task task) {
+    public void delete(Aboba aboba) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle(title);
         builder.setPositiveButton(yes, (dialog, which) -> {
-                    App.dataBase.taskDao().delete(task);
+                    App.dataBase.taskDao().delete(aboba);
                     initFragmentResultListener();
                 }
         );

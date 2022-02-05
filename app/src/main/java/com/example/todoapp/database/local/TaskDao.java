@@ -6,21 +6,20 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.todoapp.models.Task;
+import com.example.todoapp.models.Aboba;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao
 public interface TaskDao {
-    @Query("SELECT * FROM table_tasks")
-    List<Task> getAllTasks();
+    @Query("SELECT * FROM Aboba")
+    List<Aboba> getAllTasks();
     @Insert
-    void addTask(Task task);
+    void addTask(Aboba aboba);
 
     @Update
-    void update(Task task);
+    void update(Aboba aboba);
 
     @Delete
-    void delete (Task task);
+    void delete (Aboba aboba);
 }

@@ -1,31 +1,33 @@
 package com.example.todoapp.ui.fragment.home;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoapp.databinding.ItemMainRvBinding;
-import com.example.todoapp.models.Task;
+import com.example.todoapp.models.Aboba;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
-    private List<Task> list = new ArrayList<>();
+    private List<Aboba> list = new ArrayList<>();
     ItemMainRvBinding binding;
-    Click click ;
+    Click click;
+
     public MainAdapter(Click click) {
         this.click = click;
     }
-    public void setList(List<Task> list) {
+
+
+
+    public void setList(List<Aboba> list) {
         this.list = list;
         notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -37,25 +39,29 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.onBind(list.get(position));
         holder.binding.txtTitle.setOnClickListener(v -> {
-        click.click(list.get(holder.getAdapterPosition()));
+            click.click(list.get(holder.getAdapterPosition()));
         });
-     holder.binding.txtTitle.setOnLongClickListener(v -> {
-         click.delete(list.get(holder.getAdapterPosition()));
-         return true;
-     });
+        holder.binding.txtTitle.setOnLongClickListener(v -> {
+            click.delete(list.get(holder.getAdapterPosition()));
+            return true;
+        });
     }
+
     @Override
     public int getItemCount() {
         return list.size();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemMainRvBinding binding;
+
         public ViewHolder(@NonNull ItemMainRvBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
-        public void onBind(Task task) {
-            binding.txtTitle.setText(task.getTitle());
+
+        public void onBind(Aboba aboba) {
+            binding.txtTitle.setText(aboba.getTitle());
         }
     }
 }

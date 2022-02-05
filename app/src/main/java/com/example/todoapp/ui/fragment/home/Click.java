@@ -1,8 +1,8 @@
 package com.example.todoapp.ui.fragment.home;
 
-import com.example.todoapp.models.Task;
+import com.example.todoapp.models.Aboba;
 
 public interface Click {
-    void click (Task task);
-    void delete (Task task);
+    void click (Aboba aboba);
+    void delete (Aboba aboba);
 }

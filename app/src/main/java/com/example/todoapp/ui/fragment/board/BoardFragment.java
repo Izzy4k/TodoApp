@@ -73,9 +73,9 @@ public class BoardFragment extends Fragment {
     private void initListener() {
         new TabLayoutMediator(binding.tabBoard, binding.viewPagerBoard, (tab, position) -> {
             if (position == 0) {
-                tab.setIcon(R.drawable.ic_click);
-            } else {
                 tab.setIcon(R.drawable.ic_primitivedot_106373);
+            } else {
+                tab.setIcon(R.drawable.ic_click);
             }
 
 
@@ -83,12 +83,12 @@ public class BoardFragment extends Fragment {
         binding.tabBoard.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                tab.setIcon(R.drawable.ic_click);
+                tab.setIcon(R.drawable.ic_primitivedot_106373);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                tab.setIcon(R.drawable.ic_primitivedot_106373);
+                tab.setIcon(R.drawable.ic_click);
             }
 
             @Override

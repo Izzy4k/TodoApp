@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         controller = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 //        return NavigationUI.navigateUp(controller,appBarConfiguration ) || super.onSupportNavigateUp();
 //
 //    }
-    public void updateStatusBar(String color){
+    public void updateStatusBar(String color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
