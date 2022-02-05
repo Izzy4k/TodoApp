@@ -42,55 +42,59 @@ public class DetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isSaveFire) {
+
             initListener();
             initArgumentsListener();
-        } else {
-            initArgumentsFireListener();
+
             initListenerFire();
-        }
+            initArgumentsFireListener();
+
     }
 
     private void initArgumentsFireListener() {
-        if (getArguments() != null) {
-            Aboba aboba = (Aboba) getArguments().getSerializable("model");
+        if(isSaveFire) {
+            if (getArguments() != null) {
+                Aboba aboba = (Aboba) getArguments().getSerializable("model");
+                binding.btnSave.setText("Edit");
+                binding.etTxt.setText(aboba.getTitle());
+                binding.btnSave.setOnClickListener(v -> {
+                    String title = binding.etTxt.getText().toString().trim();
+                    if (!title.equals("")) {
+                        aboba.setTitle(title);
+//                        Toast.makeText(requireContext(), aboba.getIdFire(), Toast.LENGTH_LONG).show();
+                   myDialog.show();
+                        db.collection("users").document(aboba.getIdFire()).set(aboba).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                myDialog.dismiss();
+                                closeFragment();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(requireContext(), "Пошел ты !", Toast.LENGTH_SHORT).show();
+                                myDialog.dismiss();
+                            }
+                        });
+                    }
 
-            binding.btnSave.setText("Edit");
-            binding.etTxt.setText(aboba.getTitle());
-            binding.btnSave.setOnClickListener(v -> {
-                String title = binding.etTxt.getText().toString().trim();
-                if (!title.equals("")) {
-                    aboba.setTitle(title);
-                    myDialog.show();
-                    db.collection("users").document(aboba.getIdFire()).set(aboba).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            myDialog.dismiss();
-                            closeFragment();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(requireContext(), "Пошел ты !", Toast.LENGTH_SHORT).show();
-                            myDialog.dismiss();
-                        }
-                    });
-                }
-
-            });
+                });
+            }
         }
     }
 
     private void initListenerFire() {
-        binding.btnSave.setText("Save");
-        binding.btnSave.setOnClickListener(v -> {
-            String result = binding.etTxt.getText().toString().trim();
-            if (!result.equals("")) {
-                saveData(result);
-                myDialog.show();
-            }
+        if(isSaveFire){
+            binding.btnSave.setText("Save");
+            binding.btnSave.setOnClickListener(v -> {
+                String result = binding.etTxt.getText().toString().trim();
+                if (!result.equals("")) {
+                    saveData(result);
+                    myDialog.show();
+                }
 
-        });
+            });
+        }
     }
 
     private void saveData(String result) {
@@ -108,34 +112,38 @@ public class DetailFragment extends Fragment {
     }
 
     private void initArgumentsListener() {
-        if (getArguments() != null) {
-            Aboba aboba = (Aboba) getArguments().getSerializable("model");
-            binding.etTxt.setText(aboba.getTitle());
-            binding.btnSave.setText("Edit");
+        if(!isSaveFire) {
+            if (getArguments() != null) {
+                Aboba aboba = (Aboba) getArguments().getSerializable("model");
+                binding.etTxt.setText(aboba.getTitle());
+                binding.btnSave.setText("Edit");
+                binding.btnSave.setOnClickListener(v -> {
+                    String result = binding.etTxt.getText().toString().trim();
+                    if (!result.equals("")) {
+                        aboba.setTitle(result);
+                        App.dataBase.taskDao().update(aboba);
+                        closeFragment();
+                    } else {
+                        Toast.makeText(requireContext(), "Пусто", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    }
+
+    private void initListener() {
+        if(!isSaveFire) {
+            binding.btnSave.setText("Save");
             binding.btnSave.setOnClickListener(v -> {
                 String result = binding.etTxt.getText().toString().trim();
                 if (!result.equals("")) {
-                    aboba.setTitle(result);
-                    App.dataBase.taskDao().update(aboba);
                     closeFragment();
+                    saveTask(result);
                 } else {
                     Toast.makeText(requireContext(), "Пусто", Toast.LENGTH_LONG).show();
                 }
             });
         }
-    }
-
-    private void initListener() {
-        binding.btnSave.setText("Save");
-        binding.btnSave.setOnClickListener(v -> {
-            String result = binding.etTxt.getText().toString().trim();
-            if (!result.equals("")) {
-                closeFragment();
-                saveTask(result);
-            } else {
-                Toast.makeText(requireContext(), "Пусто", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void saveTask(String result) {
