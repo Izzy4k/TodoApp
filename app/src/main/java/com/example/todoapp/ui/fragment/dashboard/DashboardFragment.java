@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.fragment.dashboard;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.todoapp.App;
 import com.example.todoapp.R;
 import com.example.todoapp.databinding.FragmentDashboardBinding;
 import com.example.todoapp.models.Aboba;
@@ -30,6 +32,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DashboardFragment extends Fragment implements Click {
@@ -39,14 +42,22 @@ public class DashboardFragment extends Fragment implements Click {
     private NavController controller;
     private FirebaseFirestore db;
     private MyDialog myDialog;
-    private List<Aboba> list;
+    private List<Aboba> list = new ArrayList<>();
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new MainAdapter(this);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         db = FirebaseFirestore.getInstance();
         myDialog = new MyDialog(requireActivity());
-        adapter = new MainAdapter(this);
+
+        binding.rvNoteDash.setAdapter(adapter);
         return binding.getRoot();
     }
 
@@ -54,48 +65,75 @@ public class DashboardFragment extends Fragment implements Click {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         controller = Navigation.findNavController(view);
+
         initListener();
-        myDialog.show();
         initListenerData();
     }
 
     private void initListenerData() {
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                List<Aboba> list = task.getResult().toObjects(Aboba.class);
-//                adapter.setList(list);
-                if (task.isSuccessful()) {
+            myDialog.show();
+            db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                List<Aboba> top = task.getResult().toObjects(Aboba.class);
+//                adapter.setList(top);
+//                for(Aboba aboba : list){
+//                    aboba.setIdFire(list.get(list.indexOf()));
+//                }
                     for (QueryDocumentSnapshot shot : task.getResult()) {
                         Aboba aboba = shot.toObject(Aboba.class);
                         aboba.setIdFire(shot.getId());
                         list.add(aboba);
                     }
-                }
+//                    for (int i = 0; i < list.size(); i++) {
+//                        if (list.get(i).equals(aboba)) {
+//                            return;
+//                        } else {
+//                            list.add(aboba);
+//                        }
+//                            }
+//                    for (int i = 0; i < list.size(); i++) {
+//                        if(list.get(i) == aboba){
+//                            list.add(aboba);
+//                        }
+//                    }
+//                    if(list.contains(aboba)){
+//                        return;
+//                    }else {
+//                        list.add(aboba);
+//                    }
+//                        if (list.containsAll(list)) {
+//                            break;
+//                        } else {
+//                            list.add(aboba);
+////                        }
+////                    }
+//                        }
+//                        if(list.containsAll(top)){
+//                            break;
+//                        }else {
+//                            list.add(aboba);
+//                        }
 //                List<Aboba> list = task.getResult().toObjects(Aboba.class);
 //                adapter.setList(list);
-                myDialog.dismiss();
-                adapter.setList(list);
+                        myDialog.dismiss();
+                        adapter.setList(list);
+//
+//                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(requireContext(),
+                            "Не фартануло ", Toast.LENGTH_LONG).show();
+                    myDialog.dismiss();
 
+                }
+            });
+        }
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(requireContext(),
-                        "Не фартануло ", Toast.LENGTH_LONG).show();
-                myDialog.dismiss();
-
-            }
-        });
-
-    }
 
     private void initListener() {
-        binding.rvNoteDash.setAdapter(adapter);
         binding.btnAddDash.setOnClickListener(v -> {
             controller.navigate(R.id.detailFragment);
             DetailFragment.isSaveFire = true;
@@ -110,13 +148,20 @@ public class DashboardFragment extends Fragment implements Click {
 
     @Override
     public void click(Aboba aboba) {
-
         navigate(aboba);
     }
 
     @Override
     public void delete(Aboba aboba) {
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Вы действительно хотите удалить эту запись?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+                    db.collection("users").document(aboba.getIdFire()).delete();
+                }
+        );
+        builder.setNegativeButton("Not", (dialog, which) -> {
+            Toast.makeText(requireContext(), "Да пошел ты!", Toast.LENGTH_LONG).show();
+        }).show();
     }
 
     private void navigate(Aboba aboba) {
@@ -124,5 +169,6 @@ public class DashboardFragment extends Fragment implements Click {
         bundle.putSerializable("model", aboba);
         controller.navigate(R.id.detailFragment, bundle);
         DetailFragment.isSaveFire = true;
+
     }
 }

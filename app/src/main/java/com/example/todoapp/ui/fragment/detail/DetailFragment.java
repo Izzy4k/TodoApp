@@ -98,9 +98,11 @@ public class DetailFragment extends Fragment {
     }
 
     private void saveData(String result) {
-        db.collection("users").add(new Aboba(result))
+        Aboba aboba = new Aboba(result);
+        db.collection("users").add(aboba)
                 .addOnSuccessListener(documentReference -> {
                     closeFragment();
+//                    aboba.setIdFire(documentReference.getId());
                     myDialog.dismiss();
                 })
                 .addOnFailureListener(e -> {

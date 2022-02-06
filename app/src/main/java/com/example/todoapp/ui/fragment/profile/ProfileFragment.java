@@ -20,6 +20,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -34,6 +36,7 @@ import com.example.todoapp.App;
 import com.example.todoapp.R;
 import com.example.todoapp.databinding.FragmentProfileBinding;
 import com.example.todoapp.utils.Prefs;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,14 +45,15 @@ import java.io.IOException;
 
 public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
-    private Uri uri ;
-
+    private Uri uri;
+    private FirebaseAuth auth;
     private ActivityResultLauncher<Intent> resultContracts;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater);
+        auth = FirebaseAuth.getInstance();
         return binding.getRoot();
     }
 
@@ -81,6 +85,10 @@ public class ProfileFragment extends Fragment {
             clear();
             initImageListener();
         });
+        binding.btnExit.setOnClickListener(v -> {
+            auth.signOut();
+            navigate(R.id.authFragment);
+        });
     }
 
     private void clear() {
@@ -99,11 +107,12 @@ public class ProfileFragment extends Fragment {
         if (!lastName.equals("")) {
             Prefs.getPrefs().saveLastName(lastName);
         }
-        if(uri != null){
+        if (uri != null) {
             Prefs.getPrefs().saveImage(uri);
-            Toast.makeText(requireContext(),"Вы успешно сохранились",Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Вы успешно сохранились", Toast.LENGTH_LONG).show();
         }
     }
+
     private void initListener() {
         binding.imageScreen.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -123,11 +132,12 @@ public class ProfileFragment extends Fragment {
                 result -> {
                     Intent intent = result.getData();
                     if (intent != null) {
-                         uri = intent.getData();
+                        uri = intent.getData();
                         Glide.with(binding.imageScreen).load(uri).circleCrop().into(binding.imageScreen);
                     }
                 });
     }
+
     private void getGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -145,6 +155,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-
+    private void navigate(int id) {
+        NavController controller = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+        controller.navigate(id);
+    }
 
 }
