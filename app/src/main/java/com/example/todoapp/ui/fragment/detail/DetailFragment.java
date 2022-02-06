@@ -21,6 +21,7 @@ import com.example.todoapp.models.Aboba;
 import com.example.todoapp.utils.MyDialog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.datepicker.SingleDateSelector;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class DetailFragment extends Fragment {
@@ -43,16 +44,16 @@ public class DetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-            initListener();
-            initArgumentsListener();
+        initListener();
+        initArgumentsListener();
 
-            initListenerFire();
-            initArgumentsFireListener();
+        initListenerFire();
+        initArgumentsFireListener();
 
     }
 
     private void initArgumentsFireListener() {
-        if(isSaveFire) {
+        if (isSaveFire) {
             if (getArguments() != null) {
                 Aboba aboba = (Aboba) getArguments().getSerializable("model");
                 binding.btnSave.setText("Edit");
@@ -62,12 +63,12 @@ public class DetailFragment extends Fragment {
                     if (!title.equals("")) {
                         aboba.setTitle(title);
 //                        Toast.makeText(requireContext(), aboba.getIdFire(), Toast.LENGTH_LONG).show();
-                   myDialog.show();
+                        myDialog.show();
                         db.collection("users").document(aboba.getIdFire()).set(aboba).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
                                 myDialog.dismiss();
-                                closeFragment();
+                                closeFragment(R.id.action_detailFragment_to_navigation_dashboard);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -84,7 +85,7 @@ public class DetailFragment extends Fragment {
     }
 
     private void initListenerFire() {
-        if(isSaveFire){
+        if (isSaveFire) {
             binding.btnSave.setText("Save");
             binding.btnSave.setOnClickListener(v -> {
                 String result = binding.etTxt.getText().toString().trim();
@@ -101,7 +102,7 @@ public class DetailFragment extends Fragment {
         Aboba aboba = new Aboba(result);
         db.collection("users").add(aboba)
                 .addOnSuccessListener(documentReference -> {
-                    closeFragment();
+                    closeFragment(R.id.action_detailFragment_to_navigation_dashboard);
 //                    aboba.setIdFire(documentReference.getId());
                     myDialog.dismiss();
                 })
@@ -114,7 +115,7 @@ public class DetailFragment extends Fragment {
     }
 
     private void initArgumentsListener() {
-        if(!isSaveFire) {
+        if (!isSaveFire) {
             if (getArguments() != null) {
                 Aboba aboba = (Aboba) getArguments().getSerializable("model");
                 binding.etTxt.setText(aboba.getTitle());
@@ -124,7 +125,7 @@ public class DetailFragment extends Fragment {
                     if (!result.equals("")) {
                         aboba.setTitle(result);
                         App.dataBase.taskDao().update(aboba);
-                        closeFragment();
+                        closeFragment(R.id.action_detailFragment_to_navigation_home);
                     } else {
                         Toast.makeText(requireContext(), "Пусто", Toast.LENGTH_LONG).show();
                     }
@@ -134,12 +135,12 @@ public class DetailFragment extends Fragment {
     }
 
     private void initListener() {
-        if(!isSaveFire) {
+        if (!isSaveFire) {
             binding.btnSave.setText("Save");
             binding.btnSave.setOnClickListener(v -> {
                 String result = binding.etTxt.getText().toString().trim();
                 if (!result.equals("")) {
-                    closeFragment();
+                    closeFragment(R.id.action_detailFragment_to_navigation_home);
                     saveTask(result);
                 } else {
                     Toast.makeText(requireContext(), "Пусто", Toast.LENGTH_LONG).show();
@@ -153,9 +154,9 @@ public class DetailFragment extends Fragment {
         App.dataBase.taskDao().addTask(aboba);
     }
 
-    private void closeFragment() {
+    private void closeFragment(int id) {
         controller = Navigation.findNavController(requireActivity(),
                 R.id.nav_host_fragment_activity_main);
-        controller.navigateUp();
+        controller.navigate(id);
     }
 }
