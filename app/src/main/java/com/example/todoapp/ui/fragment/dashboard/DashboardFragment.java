@@ -24,6 +24,7 @@ import com.example.todoapp.ui.fragment.home.MainAdapter;
 import com.example.todoapp.utils.MyDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldPath;
@@ -71,20 +72,20 @@ public class DashboardFragment extends Fragment implements Click {
     }
 
     private void initListenerData() {
-            myDialog.show();
-            db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        myDialog.show();
+        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 //                List<Aboba> top = task.getResult().toObjects(Aboba.class);
 //                adapter.setList(top);
 //                for(Aboba aboba : list){
 //                    aboba.setIdFire(list.get(list.indexOf()));
 //                }
-                    for (QueryDocumentSnapshot shot : task.getResult()) {
-                        Aboba aboba = shot.toObject(Aboba.class);
-                        aboba.setIdFire(shot.getId());
-                        list.add(aboba);
-                    }
+                for (QueryDocumentSnapshot shot : task.getResult()) {
+                    Aboba aboba = shot.toObject(Aboba.class);
+                    aboba.setIdFire(shot.getId());
+                    list.add(aboba);
+                }
 //                    for (int i = 0; i < list.size(); i++) {
 //                        if (list.get(i).equals(aboba)) {
 //                            return;
@@ -116,21 +117,21 @@ public class DashboardFragment extends Fragment implements Click {
 //                        }
 //                List<Aboba> list = task.getResult().toObjects(Aboba.class);
 //                adapter.setList(list);
-                        myDialog.dismiss();
-                        adapter.setList(list);
+                myDialog.dismiss();
+                adapter.setList(list);
 //
 //                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(requireContext(),
-                            "Не фартануло ", Toast.LENGTH_LONG).show();
-                    myDialog.dismiss();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(requireContext(),
+                        "Не фартануло ", Toast.LENGTH_LONG).show();
+                myDialog.dismiss();
 
-                }
-            });
-        }
+            }
+        });
+    }
 
 
     private void initListener() {
@@ -156,7 +157,20 @@ public class DashboardFragment extends Fragment implements Click {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Вы действительно хотите удалить эту запись?");
         builder.setPositiveButton("Yes", (dialog, which) -> {
-                    db.collection("users").document(aboba.getIdFire()).delete();
+                    myDialog.show();
+                    db.collection("users").document(aboba.getIdFire()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            adapter.delete(aboba);
+                            myDialog.dismiss();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(requireContext(), "Да пошел ты!", Toast.LENGTH_LONG).show();
+                            myDialog.dismiss();
+                        }
+                    });
                 }
         );
         builder.setNegativeButton("Not", (dialog, which) -> {

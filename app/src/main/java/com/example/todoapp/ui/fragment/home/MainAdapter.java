@@ -22,6 +22,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     }
 
 
+    public void delete(Aboba aboba) {
+        this.list.remove(aboba);
+        notifyDataSetChanged();
+    }
 
     public void setList(List<Aboba> list) {
         this.list = list;
