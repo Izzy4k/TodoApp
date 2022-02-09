@@ -66,9 +66,18 @@ public class DashboardFragment extends Fragment implements Click {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         controller = Navigation.findNavController(view);
-
         initListener();
         initListenerData();
+        initDefault();
+        initAnimate();
+    }
+
+    private void initAnimate() {
+        binding.btnAddDash.animate().translationX(0).setDuration(1000).start();
+    }
+
+    private void initDefault() {
+        binding.btnAddDash.setTranslationX(200);
     }
 
     private void initListenerData() {
@@ -76,51 +85,13 @@ public class DashboardFragment extends Fragment implements Click {
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                List<Aboba> top = task.getResult().toObjects(Aboba.class);
-//                adapter.setList(top);
-//                for(Aboba aboba : list){
-//                    aboba.setIdFire(list.get(list.indexOf()));
-//                }
                 for (QueryDocumentSnapshot shot : task.getResult()) {
                     Aboba aboba = shot.toObject(Aboba.class);
                     aboba.setIdFire(shot.getId());
                     list.add(aboba);
                 }
-//                    for (int i = 0; i < list.size(); i++) {
-//                        if (list.get(i).equals(aboba)) {
-//                            return;
-//                        } else {
-//                            list.add(aboba);
-//                        }
-//                            }
-//                    for (int i = 0; i < list.size(); i++) {
-//                        if(list.get(i) == aboba){
-//                            list.add(aboba);
-//                        }
-//                    }
-//                    if(list.contains(aboba)){
-//                        return;
-//                    }else {
-//                        list.add(aboba);
-//                    }
-//                        if (list.containsAll(list)) {
-//                            break;
-//                        } else {
-//                            list.add(aboba);
-////                        }
-////                    }
-//                        }
-//                        if(list.containsAll(top)){
-//                            break;
-//                        }else {
-//                            list.add(aboba);
-//                        }
-//                List<Aboba> list = task.getResult().toObjects(Aboba.class);
-//                adapter.setList(list);
                 myDialog.dismiss();
                 adapter.setList(list);
-//
-//                    }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

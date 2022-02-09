@@ -11,8 +11,8 @@ import com.example.todoapp.databinding.ItemBoardBinding;
 
 public class PagerAdapterBob extends RecyclerView.Adapter<PagerAdapterBob.PagerViewHolder> {
     ItemBoardBinding binding;
-    private final int[] images = {R.drawable.ic_board_first, R.drawable.ic_board_second,
-            R.drawable.ic_board_third};
+    private final int[] images = {R.raw.rocket, R.raw.step_loader,
+            R.raw.colors};
     private final String[] titles = {"Что-то на умном", "Cделай вид что читаешь",
             "Долгожданый конец "};
     private final String[] descriptions = {"аывфафалывфафлоафылоафдваоофлыаф", "вфаолафыоафылоафло",
@@ -45,7 +45,7 @@ public class PagerAdapterBob extends RecyclerView.Adapter<PagerAdapterBob.PagerV
         }
 
         public void onBind(int image, String title, String description) {
-            binding.imageBoard.setImageResource(image);
+            binding.animationView.setAnimation(image);
             binding.txtTitleBoard.setText(title);
             binding.txtDescriptionBoard.setText(description);
         }

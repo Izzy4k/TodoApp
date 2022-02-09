@@ -34,6 +34,7 @@ public class BoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentBoardBinding.inflate(inflater);
+        initDefault();
         return binding.getRoot();
     }
 
@@ -50,7 +51,16 @@ public class BoardFragment extends Fragment {
         initPager();
         initListener();
         initBtn();
+        initAnimate();
+    }
 
+    private void initDefault() {
+        binding.txtSkip.setTranslationX(-100);
+        binding.txtFinish.setEnabled(false);
+    }
+
+    private void initAnimate() {
+        binding.txtSkip.animate().translationX(0).setDuration(2000).start();
     }
 
 
@@ -77,8 +87,6 @@ public class BoardFragment extends Fragment {
             } else {
                 tab.setIcon(R.drawable.ic_click);
             }
-
-
         }).attach();
         binding.tabBoard.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -101,9 +109,11 @@ public class BoardFragment extends Fragment {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (position == 2) {
-                    binding.txtFinish.setVisibility(View.VISIBLE);
+                    binding.txtFinish.animate().alpha(1).setDuration(2000).start();
+                    binding.txtFinish.setEnabled(true);
                 } else {
-                    binding.txtFinish.setVisibility(View.GONE);
+                    binding.txtFinish.animate().alpha(0).setDuration(1000).start();
+                    binding.txtFinish.setEnabled(false);
                 }
             }
         });

@@ -85,8 +85,17 @@ public class AuthFragment extends Fragment {
                 }
             }
         });
+        initDefault();
+        initAnimate();
     }
 
+    private void initAnimate() {
+        binding.btnAuth.animate().translationY(0).setDuration(1500).start();
+    }
+
+    private void initDefault() {
+        binding.btnAuth.setTranslationY(800);
+    }
 
 
     private void initAuth() {

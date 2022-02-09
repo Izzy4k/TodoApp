@@ -64,6 +64,26 @@ public class ProfileFragment extends Fragment {
         initBtn();
         initText();
         initImageListener();
+        initDefault();
+        initAnimate();
+    }
+
+    private void initAnimate() {
+        binding.imageScreen.animate().translationY(0).setDuration(1000).start();
+        binding.txtFirstName.animate().translationX(0).setDuration(1000).start();
+        binding.txtLastName.animate().translationX(0).setDuration(1000).start();
+        binding.btnSave.animate().translationY(0).setDuration(1000).start();
+        binding.btnExit.animate().rotationX(0).setDuration(1000).start();
+        binding.editFirstName.animate().alpha(1).setDuration(1000).start();
+        binding.editLastName.animate().alpha(1).setDuration(1000).start();
+    }
+
+    private void initDefault() {
+        binding.imageScreen.setTranslationY(-200);
+        binding.txtFirstName.setTranslationX(-200);
+        binding.txtLastName.setTranslationX(200);
+        binding.btnSave.setTranslationY(500);
+        binding.btnExit.setRotationX(180);
     }
 
     private void initImageListener() {

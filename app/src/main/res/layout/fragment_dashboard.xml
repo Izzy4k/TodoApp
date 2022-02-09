@@ -14,6 +14,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
         tools:listitem="@layout/item_main_rv"
+        android:layoutAnimation="@anim/layout_animation"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

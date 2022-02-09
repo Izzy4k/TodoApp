@@ -60,7 +60,15 @@ public class HomeFragment extends Fragment implements Click {
         binding.rvNote.setAdapter(adapter);
         initListener();
         initFragmentResultListener();
+        initDefault();
+        initAnimate();
+    }
+    private void initAnimate() {
+        binding.btnAdd.animate().translationX(0).setDuration(1000).start();
+    }
 
+    private void initDefault() {
+        binding.btnAdd.setTranslationX(200);
     }
 
     private void initFragmentResultListener() {
